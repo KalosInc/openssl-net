@@ -191,7 +191,10 @@ namespace OpenSSL.Core
 		#region Version
 
 		// 1.0.2a Release
-		public const uint Wrapper = 0x1000201F;
+		//public const uint Wrapper = 0x1000201F;
+		
+		//our version
+		public const uint Wrapper = 0x100010CF;
 
 		[DllImport(DLLNAME, CallingConvention = CallingConvention.Cdecl)]
 		public extern static IntPtr SSLeay_version(int type);
