@@ -1839,6 +1839,12 @@ namespace OpenSSL.Core
 		[DllImport(DLLNAME, CallingConvention = CallingConvention.Cdecl)]
 		public extern static int EVP_SignFinal(IntPtr ctx, byte[] md, ref uint s, IntPtr pkey);
 
+    [DllImport(DLLNAME, CallingConvention = CallingConvention.Cdecl)]
+		public extern static int EVP_DigestSignInit(IntPtr ctx, IntPtr pkeyCtx, IntPtr sha, uint s, IntPtr pkey);
+
+    [DllImport(DLLNAME, CallingConvention = CallingConvention.Cdecl)]
+		public extern static int EVP_DigestSignFinal(IntPtr ctx, byte[] sigret, ref uint s);
+
 		[DllImport(DLLNAME, CallingConvention = CallingConvention.Cdecl)]
 		public extern static int EVP_VerifyFinal(IntPtr ctx, byte[] sigbuf, uint siglen, IntPtr pkey);
 
