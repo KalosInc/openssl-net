@@ -320,19 +320,22 @@ namespace OpenSSL.Crypto
 			return ret == 1;
 		}
 
-	  public byte[] DigestSign(byte[] msg, CryptoKey pkey)
-	  {
+ 		public byte[] DigestSign(byte[] msg, CryptoKey pkey)
+    {
       var sig = new byte[pkey.Size];
-      var len = (uint)sig.Length;
+      var len = (uint) sig.Length;
+      var mlen = (uint) msg.Length;
 
-      Native.ExpectSuccess(Native.EVP_DigestSignInit(ptr, IntPtr.Zero, Native.EVP_sha256(), 0, pkey.Handle));
+      Native.ExpectSuccess(Native.EVP_DigestSignInit(ptr, IntPtr.Zero, md.Handle, 0, pkey.Handle));
+      Native.ExpectSuccess(Native.EVP_DigestUpdate(ptr, msg, mlen));
+
       Native.ExpectSuccess(Native.EVP_DigestSignFinal(ptr, sig, ref len));
 
       var ret = new byte[len];
-      Buffer.BlockCopy(sig, 0, ret, 0, (int)len);
+      Buffer.BlockCopy(sig, 0, ret, 0, (int) len);
 
       return ret;
-    }
+   }
 
 
 		/// <summary>
