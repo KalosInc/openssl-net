@@ -26,6 +26,7 @@
 using OpenSSL.Core;
 using System;
 using System.Runtime.InteropServices;
+using System.Security;
 
 namespace OpenSSL.Crypto
 {
@@ -192,11 +193,30 @@ namespace OpenSSL.Crypto
 			return new CryptoKey(ptr, true);
 		}
 
-		/// <summary>
-		/// Calls EVP_PKEY_set1_DSA()
-		/// </summary>
-		/// <param name="dsa"></param>
-		public CryptoKey(DSA dsa)
+        /// <summary>
+        /// Calls PEM_read_bio_PrivateKey()
+        /// </summary>
+        /// <param name="bio"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        public static CryptoKey FromPrivateKey(BIO bio, SecureString password)
+        {
+            var ptr = Native.ExpectNonNull(Native.PEM_read_bio_PrivateKey(
+                          bio.Handle,
+                          IntPtr.Zero,
+                          null,
+                          Marshal.SecureStringToCoTaskMemAnsi(password)
+                      ));
+            password.Dispose();
+
+            return new CryptoKey(ptr, true);
+        }
+
+        /// <summary>
+        /// Calls EVP_PKEY_set1_DSA()
+        /// </summary>
+        /// <param name="dsa"></param>
+        public CryptoKey(DSA dsa)
 			: this()
 		{
 			Native.ExpectSuccess(Native.EVP_PKEY_set1_DSA(ptr, dsa.Handle));
