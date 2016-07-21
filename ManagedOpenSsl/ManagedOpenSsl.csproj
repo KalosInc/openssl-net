@@ -39,7 +39,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\bin\Debug\ManagedOpenSsl.XML</DocumentationFile>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -115,6 +115,7 @@
     <Compile Include="Core\BIO.cs" />
     <Compile Include="Core\Asn1Integer.cs" />
     <Compile Include="Core\Crypto.cs" />
+    <Compile Include="Core\FipsMode.cs" />
     <Compile Include="Core\MemoryTracker.cs" />
     <Compile Include="Crypto\Cipher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

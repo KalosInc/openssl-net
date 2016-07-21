@@ -116,7 +116,7 @@ namespace OpenSSL.CLI
 
 			using (var bio = BIO.MemoryBuffer())
 			{
-				rsa.WritePrivateKey(bio, enc, Program.OnPassword, options["passout"]);
+//				rsa.WritePrivateKey(bio, enc, Program.OnPassword, options["passout"]);
 
 				var outfile = options["out"] as string;
 				if (string.IsNullOrEmpty(outfile))

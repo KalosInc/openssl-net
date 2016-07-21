@@ -2493,13 +2493,15 @@ namespace OpenSSL.Core
 		[DllImport(DLLNAME, CallingConvention = CallingConvention.Cdecl)]
 		public extern static int FIPS_mode_set(int onoff);
 
-		#endregion
+        [DllImport(DLLNAME, CallingConvention = CallingConvention.Cdecl)]
+        public extern static int FIPS_mode();
+        #endregion
 
-		#region SSL Routines
+        #region SSL Routines
 
-		#region Initialization
+        #region Initialization
 
-		[DllImport(SSLDLLNAME, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(SSLDLLNAME, CallingConvention = CallingConvention.Cdecl)]
 		public extern static void SSL_load_error_strings();
 
 		[DllImport(SSLDLLNAME, CallingConvention = CallingConvention.Cdecl)]

@@ -26,6 +26,7 @@
 using OpenSSL.Core;
 using System;
 using System.Runtime.InteropServices;
+using System.Security;
 
 namespace OpenSSL.Crypto
 {
@@ -460,17 +461,16 @@ namespace OpenSSL.Crypto
 		/// <param name="enc"></param>
 		/// <param name="passwd"></param>
 		/// <param name="arg"></param>
-		public void WritePrivateKey(BIO bio, Cipher enc, PasswordHandler passwd, object arg)
+		public void WritePrivateKey(BIO bio, Cipher enc, SecureString password, object arg)
 		{
-			PasswordThunk thunk = new PasswordThunk(passwd, arg);
 			Native.ExpectSuccess(Native.PEM_write_bio_RSAPrivateKey(
 				bio.Handle,
 				this.ptr,
 				enc == null ? IntPtr.Zero : enc.Handle,
 				null,
 				0,
-				thunk.Callback,
-				IntPtr.Zero));
+				null,
+                Marshal.SecureStringToCoTaskMemAnsi(password)));
 		}
 
 		/// <summary>

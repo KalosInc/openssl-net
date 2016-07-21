@@ -143,8 +143,8 @@ where options are
 				{
 					if (options.IsSet("pubout"))
 						rsa.WritePublicKey(bio);
-					else
-						rsa.WritePrivateKey(bio, enc, Program.OnPassword, options["passout"]);
+//					else
+//						rsa.WritePrivateKey(bio, enc, Program.OnPassword, options["passout"]);
 
 					string outfile = options["out"] as string;
 					if (string.IsNullOrEmpty(outfile))
