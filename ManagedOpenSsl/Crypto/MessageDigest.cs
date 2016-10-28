@@ -25,6 +25,7 @@
 
 using OpenSSL.Core;
 using System;
+using System.CodeDom;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -237,11 +238,25 @@ namespace OpenSSL.Crypto
 			this.md = md;
 		}
 
-		/// <summary>
-		/// Prints the long name
-		/// </summary>
-		/// <param name="bio"></param>
-		public override void Print(BIO bio)
+	    public IntPtr Get_EVP_PKEY_CTX()
+	    {
+	        var ctx = (EVP_MD_CTX) Marshal.PtrToStructure(ptr, typeof(EVP_MD_CTX));
+
+	        return ctx.pctx;
+	    }
+
+	    public int SetRSAPadding( IntPtr pctx, int padding)
+	    {
+	        int EVP_PKEY_CTRL_RSA_PADDING = 0x1000 + 1;
+
+            return Native.ExpectSuccess(Native.EVP_PKEY_CTX_ctrl(pctx, 6 /*RSA*/, -1, EVP_PKEY_CTRL_RSA_PADDING, padding, IntPtr.Zero));
+        }
+
+        /// <summary>
+        /// Prints the long name
+        /// </summary>
+        /// <param name="bio"></param>
+        public override void Print(BIO bio)
 		{
 			bio.Write("MessageDigestContext: " + md.LongName);
 		}
@@ -258,6 +273,7 @@ namespace OpenSSL.Crypto
 			var digest = new byte[md.Size];
 			var len = (uint)digest.Length;
 			Native.ExpectSuccess(Native.EVP_DigestInit_ex(ptr, md.Handle, IntPtr.Zero));
+
 			Native.ExpectSuccess(Native.EVP_DigestUpdate(ptr, msg, (uint)msg.Length));
 			Native.ExpectSuccess(Native.EVP_DigestFinal_ex(ptr, digest, ref len));
 			return digest;
@@ -321,21 +337,27 @@ namespace OpenSSL.Crypto
 		}
 
  		public byte[] DigestSign(byte[] msg, CryptoKey pkey)
-    {
-      var sig = new byte[pkey.Size];
-      var len = (uint) sig.Length;
-      var mlen = (uint) msg.Length;
+        {
+            var sig = new byte[pkey.Size];
+            var len = (uint) sig.Length;
+            var mlen = (uint) msg.Length;
 
-      Native.ExpectSuccess(Native.EVP_DigestSignInit(ptr, IntPtr.Zero, md.Handle, 0, pkey.Handle));
-      Native.ExpectSuccess(Native.EVP_DigestUpdate(ptr, msg, mlen));
+            Native.ExpectSuccess(Native.EVP_DigestSignInit(ptr, IntPtr.Zero, md.Handle, 0, pkey.Handle));
 
-      Native.ExpectSuccess(Native.EVP_DigestSignFinal(ptr, sig, ref len));
+ 		    if (pkey.Type == CryptoKey.KeyType.RSA)
+ 		    {
+ 		        var ctx = Get_EVP_PKEY_CTX();
+ 		        SetRSAPadding(ctx, (int) RSA.Padding.PKCS1);
+ 		    }
 
-      var ret = new byte[len];
-      Buffer.BlockCopy(sig, 0, ret, 0, (int) len);
+ 		    Native.ExpectSuccess(Native.EVP_DigestUpdate(ptr, msg, mlen));
+            Native.ExpectSuccess(Native.EVP_DigestSignFinal(ptr, sig, ref len));
 
-      return ret;
-   }
+            var ret = new byte[len];
+            Buffer.BlockCopy(sig, 0, ret, 0, (int) len);
+
+            return ret;
+       }
 
 
 		/// <summary>

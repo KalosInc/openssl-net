@@ -160,25 +160,33 @@ namespace OpenSSL.Crypto
 			return new RSA(Native.ExpectNonNull(ptr), true);
 		}
 
-		/// <summary>
-		/// Calls PEM_read_bio_RSAPrivateKey()
-		/// </summary>
-		/// <param name="bio"></param>
-		/// <param name="callback"></param>
-		/// <param name="arg"></param>
-		/// <returns></returns>
-		public static RSA FromPrivateKey(BIO bio, PasswordHandler callback, object arg)
-		{
-			var thunk = new PasswordThunk(callback, arg);
-			var ptr = Native.PEM_read_bio_RSAPrivateKey(bio.Handle, IntPtr.Zero, thunk.Callback, IntPtr.Zero);
-			
-			return new RSA(Native.ExpectNonNull(ptr), true);
-		}
+        /// <summary>
+        /// Calls PEM_read_bio_RSAPrivateKey()
+        /// </summary>
+        /// <param name="bio"></param>
+        /// <param name="callback"></param>
+        /// <param name="arg"></param>
+        /// <returns></returns>
+        public static RSA FromPrivateKey(BIO bio, PasswordHandler callback, object arg)
+        {
+            var thunk = new PasswordThunk(callback, arg);
+            var ptr = Native.PEM_read_bio_RSAPrivateKey(bio.Handle, IntPtr.Zero, thunk.Callback, IntPtr.Zero);
 
-		#endregion
+            return new RSA(Native.ExpectNonNull(ptr), true);
+        }
 
-		#region Properties
-		private rsa_st Raw
+        public static RSA FromPrivateKey(BIO bio, SecureString password)
+        {
+            var ptr = Native.PEM_read_bio_RSAPrivateKey(bio.Handle, IntPtr.Zero, null,
+                Marshal.SecureStringToCoTaskMemAnsi(password) );
+
+            return new RSA(Native.ExpectNonNull(ptr), true);
+        }
+
+        #endregion
+
+        #region Properties
+        private rsa_st Raw
 		{
 			get { return (rsa_st)Marshal.PtrToStructure(ptr, typeof(rsa_st)); }
 			set { Marshal.StructureToPtr(value, ptr, false); }
@@ -513,5 +521,13 @@ namespace OpenSSL.Crypto
 		#region Fields
 		private BigNumber.GeneratorThunk thunk = null;
 		#endregion
+
+	    public CryptoKey CryptoKey()
+	    {
+            var pkey = Native.EVP_PKEY_new();
+	        Native.EVP_PKEY_assign(pkey, (int) Crypto.CryptoKey.KeyType.RSA, Handle);
+
+            return new CryptoKey(pkey, true);
+        }
 	}
 }

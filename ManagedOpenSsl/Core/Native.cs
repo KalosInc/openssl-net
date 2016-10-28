@@ -1730,7 +1730,10 @@ namespace OpenSSL.Core
 		[DllImport(DLLNAME, CallingConvention = CallingConvention.Cdecl)]
 		public extern static int EVP_CIPHER_CTX_set_padding(IntPtr x, int padding);
 
-		[DllImport(DLLNAME, CallingConvention = CallingConvention.Cdecl)]
+	    [DllImport(DLLNAME, CallingConvention = CallingConvention.Cdecl)]
+	    public extern static int EVP_PKEY_CTX_ctrl(IntPtr x, int keyType, int opType, int cmd, int p1, IntPtr p2);
+
+        [DllImport(DLLNAME, CallingConvention = CallingConvention.Cdecl)]
 		public extern static int EVP_CIPHER_CTX_set_key_length(IntPtr x, int keylen);
 
 		[DllImport(DLLNAME, CallingConvention = CallingConvention.Cdecl)]

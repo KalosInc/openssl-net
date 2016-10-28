@@ -91,6 +91,7 @@
     <Compile Include="TestECDH.cs" />
     <Compile Include="TestECDSA.cs" />
     <Compile Include="TestCryptoKey.cs" />
+    <Compile Include="TestRSAPadding.cs" />
     <Compile Include="TestX509Certificate.cs" />
     <Compile Include="TestBase.cs" />
     <Compile Include="TestHMAC.cs" />
