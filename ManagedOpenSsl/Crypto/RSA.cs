@@ -177,8 +177,11 @@ namespace OpenSSL.Crypto
 
         public static RSA FromPrivateKey(BIO bio, SecureString password)
         {
-            var ptr = Native.PEM_read_bio_RSAPrivateKey(bio.Handle, IntPtr.Zero, null,
-                Marshal.SecureStringToCoTaskMemAnsi(password) );
+	        var pp = Marshal.SecureStringToCoTaskMemAnsi(password);
+
+            var ptr = Native.PEM_read_bio_RSAPrivateKey(bio.Handle, IntPtr.Zero, null, pp );
+
+					Marshal.ZeroFreeCoTaskMemAnsi(pp);
 
             return new RSA(Native.ExpectNonNull(ptr), true);
         }
@@ -467,10 +470,12 @@ namespace OpenSSL.Crypto
 		/// </summary>
 		/// <param name="bio"></param>
 		/// <param name="enc"></param>
-		/// <param name="passwd"></param>
+		/// <param name="password"></param>
 		/// <param name="arg"></param>
 		public void WritePrivateKey(BIO bio, Cipher enc, SecureString password, object arg)
 		{
+			var pp = Marshal.SecureStringToCoTaskMemAnsi(password);
+
 			Native.ExpectSuccess(Native.PEM_write_bio_RSAPrivateKey(
 				bio.Handle,
 				this.ptr,
@@ -478,7 +483,9 @@ namespace OpenSSL.Crypto
 				null,
 				0,
 				null,
-                Marshal.SecureStringToCoTaskMemAnsi(password)));
+                pp));
+
+			Marshal.ZeroFreeCoTaskMemAnsi(pp);
 		}
 
 		/// <summary>
