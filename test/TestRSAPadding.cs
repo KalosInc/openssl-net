@@ -13,6 +13,11 @@ namespace UnitTests
     [TestFixture]
     public class TestRSAPadding
     {
+	    [SetUp]
+	    public void Setup()
+	    {
+				Threading.Initialize();
+	    }
 
         [Test]
         public void TesRSAPadding()

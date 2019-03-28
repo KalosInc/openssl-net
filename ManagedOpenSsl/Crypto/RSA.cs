@@ -177,11 +177,11 @@ namespace OpenSSL.Crypto
 
         public static RSA FromPrivateKey(BIO bio, SecureString password)
         {
-	        var pp = Marshal.SecureStringToCoTaskMemAnsi(password);
+	          var pp = Marshal.SecureStringToCoTaskMemAnsi(password);
 
             var ptr = Native.PEM_read_bio_RSAPrivateKey(bio.Handle, IntPtr.Zero, null, pp );
 
-					Marshal.ZeroFreeCoTaskMemAnsi(pp);
+					  Marshal.ZeroFreeCoTaskMemAnsi(pp);
 
             return new RSA(Native.ExpectNonNull(ptr), true);
         }
@@ -532,7 +532,9 @@ namespace OpenSSL.Crypto
 	    public CryptoKey CryptoKey()
 	    {
             var pkey = Native.EVP_PKEY_new();
-	        Native.EVP_PKEY_assign(pkey, (int) Crypto.CryptoKey.KeyType.RSA, Handle);
+
+	          Native.EVP_PKEY_set1_RSA(pkey, Handle);
+	        //Native.EVP_PKEY_assign(pkey, (int) Crypto.CryptoKey.KeyType.RSA, Handle);
 
             return new CryptoKey(pkey, true);
         }
